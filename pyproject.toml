@@ -1,17 +1,11 @@
 [project]
 name = "presentation-sanity-template"
 version = "0.1.0"
-description = "Demo deck for presentation-sanity. Eventually extracted to its own repo."
+description = "Starter deck for presentation-sanity. Clone or use as a GitHub template."
 requires-python = ">=3.10"
 dependencies = [
-    "presentation-sanity[manim]",
+    "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@main",
 ]
-
-[tool.uv.sources]
-# While the template is nested inside the presentation-sanity repo, point
-# directly at the parent. When the template is extracted to its own repo,
-# replace this with `{ git = "https://github.com/.../presentation-sanity.git" }`.
-presentation-sanity = { path = "..", editable = true }
 
 [build-system]
 requires = ["hatchling"]
