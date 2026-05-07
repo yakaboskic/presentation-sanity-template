@@ -1,0 +1,40 @@
+/*
+ * Opinionated styles for presentation-sanity decks.
+ *
+ * Slidev auto-loads ./style.css from the project root. Edit this file to
+ * adjust deck-wide styling. Per-slide overrides should go in slide
+ * frontmatter (`class:`) or scoped <style> blocks inside slides.md.
+ *
+ * Best practice: scope rules under .slidev-layout to avoid leaking into
+ * the presenter UI. Anything outside that selector applies globally.
+ */
+
+/* ─── Hide nav-control buttons we don't want ────────────────────────────
+ * Slidev's NavControls bar shows a small floating cluster of icons.
+ * Each button has a `title` attribute we can target. Comment out a line
+ * to restore that button.
+ */
+button[title="Show slide overview"] { display: none !important; }    /* apps grid icon */
+button[title="More Options"]        { display: none !important; }    /* gear menu */
+/* button[title="Show info"]            { display: none !important; } */
+/* button[title="Switch to dark mode theme"], */
+/* button[title="Switch to light mode theme"] { display: none !important; } */
+
+/* ─── Disable floating overlays (goto dialog, overview modal) ─────────
+ * Triggered by the `g` key and the overview button respectively. We hide
+ * them entirely; bring them back by commenting out these rules.
+ */
+#slidev-goto-dialog { display: none !important; }
+
+/* ─── DataValue tooltip — better hover affordance ─────────────────────── */
+.slidev-layout .data-value {
+  background: rgba(94, 131, 146, 0.10);
+  border-radius: 2px;
+  padding: 0 0.15em;
+}
+
+/* ─── Code block readability ──────────────────────────────────────────── */
+.slidev-layout pre,
+.slidev-layout code {
+  font-feature-settings: "calt" 1, "liga" 1;
+}

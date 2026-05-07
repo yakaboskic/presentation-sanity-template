@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.slidev/
+*-export/
+*.local
+__pycache__/
+*.pyc
+.venv/
+.cache/
+
+# Rendered manim videos — rebuildable from scenes/*.py
+public/manim/*.webm
+public/manim/*.mp4

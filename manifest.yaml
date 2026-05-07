@@ -1,0 +1,52 @@
+# presentation-sanity manifest — single source of configuration per version.
+# This file is a placeholder for the eventual schema. The Python tool
+# `presentation-sanity` will read this and emit `data/variables.json` for the
+# Slidev side to consume, plus orchestrate manim scene rendering.
+
+metadata:
+  title: "Presentation Sanity Demo"
+  authors:
+    - name: "Your Name"
+      email: "you@example.com"
+  theme: seriph              # any Slidev theme id, package, or local path
+
+# Variables get computed by `presentation-sanity build` and written to
+# `data/variables.json`. Provenance metadata powers an interactive
+# provenance popover in the rendered deck (matching document-sanity).
+variables:
+  num_samples:
+    value: 12453
+    format: ","
+    description: "Total samples after QC filtering"
+    source: "data/results.csv"
+    command: "python data/compute.py"
+    updated: "2026-04-29"
+  p_value:
+    value: 0.0087
+    format: ".2e"
+    description: "Primary genome-wide p-value"
+    source: "data/results.csv"
+    command: "python data/compute.py"
+    updated: "2026-04-29"
+  effect_size:
+    value: 0.342
+    format: ".3f"
+    description: "Mean effect size across discovery cohort"
+    # `data` (list) renders as a multi-line "inputs" node in the
+    # provenance graph. Use this when a value depends on multiple files.
+    # Falls back to `source:` (single file) when `data:` is absent.
+    data:
+      - "data/results.csv"
+      - "data/cohort_metadata.tsv"
+    command: "python scripts/effect_size.py --cohort discovery"
+    updated: "2026-04-29"
+
+# Manim scenes to render before the Slidev build. Each entry produces
+# a video at `public/manim/<output>.webm` that slides reference via
+# `<SlidevVideo src="/manim/<output>.webm">`.
+scenes:
+  intro:
+    source: "scenes/intro.py"
+    class: "IntroScene"
+    quality: "h"             # 1080p; use 'l' for fast iteration
+    format: "webm"
