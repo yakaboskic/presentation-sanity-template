@@ -1,14 +1,18 @@
-# presentation-sanity template
+# presentation-sanity-template
 
-A working Slidev deck driven by `manifest.yaml`. Eventually extracted into
-its own repo that declares `presentation-sanity` as a dependency. For now
-it lives inside the tool's repo and uses a path-based dep
-(`tool.uv.sources.presentation-sanity = { path = ".." }`).
+A working Slidev deck driven by `manifest.yaml`. Use this repo as a starting
+point for a new deck: clone it (or use it as a GitHub template via the "Use
+this template" button), run `python init.py` to set the deck's name and
+authors, then edit `slides.md`.
+
+Declares [`presentation-sanity`](https://github.com/yakaboskic/presentation-sanity)
+as a git dependency.
 
 ## Structure
 
 ```
-template/
+your-deck/
+├── init.py                 # one-time bootstrap: prompts for name, title, authors
 ├── pyproject.toml          # declares presentation-sanity[manim] dep
 ├── package.json            # Slidev + vite-plugin-yaml
 ├── vite.config.ts          # registers the YAML plugin
@@ -30,6 +34,7 @@ template/
 ## One-time setup
 
 ```bash
+python init.py              # set deck name, title, authors (run once on a fresh clone)
 uv sync                     # installs presentation-sanity[manim] + Python deps
 npm install                 # installs Slidev side (~700 packages)
 
