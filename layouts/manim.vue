@@ -19,8 +19,11 @@
  * the video, or press the replayKey, to replay. Press the pauseKey to
  * freeze on the current frame and again to resume.
  *
- * Resolves the video to /manim/<scene>.<format> — exactly where
- * `presentation-sanity build-manim` writes its output.
+ * Resolves the video to <BASE_URL>manim/<scene>.<format> — exactly where
+ * `presentation-sanity build-manim` writes its output. Using
+ * `import.meta.env.BASE_URL` so the path follows Vite's `base` setting
+ * (necessary when the built site is served from a subdirectory; Vite's
+ * base rewriting only applies to static imports, not runtime strings).
  */
 import { onSlideEnter, onSlideLeave, useIsSlideActive } from '@slidev/client'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
@@ -45,7 +48,7 @@ const props = withDefaults(
   },
 )
 
-const src = computed(() => `/manim/${props.scene}.${props.format}`)
+const src = computed(() => `${import.meta.env.BASE_URL}manim/${props.scene}.${props.format}`)
 const video = ref<HTMLVideoElement>()
 const isActive = useIsSlideActive()
 
@@ -97,11 +100,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
 <template>
   <div class="slidev-layout manim-layout" :style="{ background }">
+    <!-- `muted` is required for browser autoplay policies; click/keys still play with sound off -->
     <video
       ref="video"
       class="manim-video"
       :controls="controls"
       preload="auto"
+      muted
       playsinline
       @click="replay"
     >
