@@ -6,27 +6,30 @@ this template" button), run `python init.py` to set the deck's name and
 authors, then edit `slides.md`.
 
 Declares [`presentation-sanity`](https://github.com/yakaboskic/presentation-sanity)
-as a git dependency.
+as a git dependency. By default the install **does not pull manim** —
+pre-rendered videos live in `public/manim/` and travel with the deck, so
+deploying doesn't require cairo/pango/native build tools. Add the `[manim]`
+extra (see below) only when you want to render scenes locally.
 
 ## Structure
 
 ```
 your-deck/
 ├── init.py                 # one-time bootstrap: prompts for name, title, authors
-├── pyproject.toml          # declares presentation-sanity[manim] dep
+├── pyproject.toml          # declares presentation-sanity dep (manim is optional)
 ├── package.json            # Slidev + vite-plugin-yaml
-├── vite.config.ts          # registers the YAML plugin
+├── vite.config.ts          # base: './' for subdirectory-servable builds + YAML plugin
 ├── manifest.yaml           # single source of config (variables, scenes, theme)
 ├── slides.md               # the deck
 ├── style.css               # opinionated global styles (auto-loaded by Slidev)
 ├── components/
 │   └── DataValue.vue       # reads manifest.yaml directly; provenance tooltip
 ├── layouts/
-│   └── manim.vue           # custom layout — full-screen manim slides
+│   └── manim.vue           # full-screen manim slides; src follows BASE_URL
 ├── scenes/
 │   └── intro.py            # manim source
-├── public/                 # static assets (absolute paths from /)
-│   └── manim/              # rendered videos (gitignored)
+├── public/                 # static assets (paths follow Vite base)
+│   └── manim/              # rendered videos — committed alongside source
 ├── .cache/                 # manim render cache (gitignored)
 └── dist/                   # build output (gitignored)
 ```
@@ -35,13 +38,25 @@ your-deck/
 
 ```bash
 python init.py              # set deck name, title, authors (run once on a fresh clone)
-uv sync                     # installs presentation-sanity[manim] + Python deps
+uv sync                     # installs presentation-sanity (no manim by default)
 npm install                 # installs Slidev side (~700 packages)
+```
 
-# For manim:
-brew install ffmpeg cairo pango      # macOS
+To **render manim scenes locally**, install the manim extra and the native
+deps it needs:
+
+```bash
+# Switch the dep in pyproject.toml to `presentation-sanity[manim]@…`, then:
+uv sync
+
+brew install ffmpeg cairo pango      # macOS — Linux: apt install libcairo2-dev libpango1.0-dev
 # LaTeX is needed for MathTex (TeX Live, BasicTeX, etc.)
 ```
+
+If you're just iterating on slides (and the deck already has rendered
+videos in `public/manim/`), skip the manim install entirely —
+`presentation-sanity build` auto-skips rendering with a log line and
+moves straight on to `slidev build`.
 
 ## Daily workflow
 
@@ -179,3 +194,17 @@ aws s3 sync dist/ s3://my-talks/2026-talk/ --acl public-read
 
 The deck uses **hash routing** (`#/2`, `#/3`, etc.) so it works on any
 static host without SPA fallback config.
+
+### Subdirectory deploys
+
+`vite.config.ts` ships with `base: './'`, so `dist/` works unchanged at
+any URL prefix (e.g. `https://host/preview/abc/`, `https://host/talks/2026/`).
+To override per-build, pass `--base` through to slidev:
+
+```bash
+uv run presentation-sanity build --base ./           # relative paths (default)
+uv run presentation-sanity build --base /talks/2026/ # known prefix
+```
+
+The `manim` layout uses `import.meta.env.BASE_URL` so video URLs follow
+the same rule — the same `dist/` lands correctly at any subdirectory.
