@@ -7,12 +7,12 @@ requires-python = ">=3.10"
 # the same tool. To upgrade, change the tag below to a newer release
 # (https://github.com/yakaboskic/presentation-sanity/releases) and run `uv lock`.
 #
-# Default install does NOT pull manim — pre-rendered videos in public/manim/
-# travel with the deck, so a deploy environment doesn't need cairo/pango/etc.
-# To render scenes locally, add the extra on the same line and run `uv sync`:
-#   "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0"
+# The [manim] extra is on by default, so `build` renders scenes/*.py into
+# public/manim/ (the machine needs ffmpeg, cairo, pango and LaTeX). For a
+# deploy environment without those, drop `[manim]`: build then skips rendering
+# and uses whatever videos are already in public/manim/.
 dependencies = [
-    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
+    "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
 ]
 
 [build-system]

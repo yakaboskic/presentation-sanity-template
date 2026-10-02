@@ -11,11 +11,10 @@ its first presentation, then write.
 Declares [`presentation-sanity`](https://github.com/yakaboskic/presentation-sanity)
 as a git dependency **pinned to a release** (`@v0.3.0`), so every project made
 from this template builds with the same tool until you choose to upgrade (see
-[Upgrading presentation-sanity](#upgrading-presentation-sanity)). By default
-the install **does not pull manim** —
-pre-rendered videos live in `public/manim/` and travel with the repo, so
-deploying doesn't require cairo/pango/native build tools. Add the `[manim]`
-extra (see below) only when you want to render scenes locally.
+[Upgrading presentation-sanity](#upgrading-presentation-sanity)). It includes
+the **`[manim]` extra**, so `uv sync` installs manim and `build` renders your
+scenes — the machine needs ffmpeg, cairo, pango and LaTeX (see
+[One-time setup](#one-time-setup)).
 
 ## Why one repo per project
 
@@ -36,7 +35,7 @@ everywhere.
 ```
 your-project/
 ├── init.py                 # one-time bootstrap: project name, authors, first presentation
-├── pyproject.toml          # declares presentation-sanity dep (manim is optional)
+├── pyproject.toml          # declares presentation-sanity[manim], pinned to a release
 ├── package.json            # Slidev + VitePress; links shared/ as a Slidev addon
 ├── manifest.yaml           # SHARED: variables, scenes, figures, bibliography, math,
 │                           #   and defaults for every presentation's outputs
@@ -72,23 +71,26 @@ your-project/
 
 ```bash
 python init.py              # project name, authors, first presentation (run once)
-uv sync                     # installs presentation-sanity (no manim by default)
+uv sync                     # installs presentation-sanity, with manim
 npm install                 # installs Slidev + VitePress and links shared/
 ```
 
-To **render manim scenes locally**, install the manim extra and its native deps:
+Rendering manim scenes needs these native tools on the machine:
 
 ```bash
-# In pyproject.toml, add the extra and keep the pinned tag:
-#   "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0"
-uv sync
-
-brew install ffmpeg cairo pango      # macOS — Linux: apt install libcairo2-dev libpango1.0-dev
+brew install ffmpeg cairo pango      # macOS — Linux: apt install ffmpeg libcairo2-dev libpango1.0-dev
 # LaTeX is needed for MathTex (TeX Live, BasicTeX, etc.)
 ```
 
-If you're just writing (and `public/manim/` already has rendered videos), skip
-the manim install entirely — `build` auto-skips rendering with a log line.
+Rendered videos are build output: `public/manim/` is gitignored, the first
+`build` renders every scene, and later builds re-render only the scenes that
+changed.
+
+On a machine without those tools (a deploy runner, a co-author who only edits
+text), drop `[manim]` from the dependency line or pass `--skip-manim`: `build`
+then skips rendering and uses whatever is already in `public/manim/`. If you
+deploy that way, commit the rendered videos — remove the `public/manim/` lines
+from `.gitignore`.
 
 ## Upgrading presentation-sanity
 
@@ -97,7 +99,7 @@ the exact commit behind it:
 
 ```toml
 dependencies = [
-    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
+    "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
 ]
 ```
 
