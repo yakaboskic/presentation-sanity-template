@@ -3,11 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "slidev --open",
-    "build": "slidev build",
-    "export": "slidev export",
-    "export:pptx": "slidev export --format pptx",
-    "export:png": "slidev export --format png"
+    "dev": "presentation-sanity dev",
+    "build": "presentation-sanity build",
+    "preview": "presentation-sanity preview"
   },
   "dependencies": {
     "@slidev/cli": "^0.50.0",
@@ -19,6 +17,8 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@modyfi/vite-plugin-yaml": "^1.1.1"
+    "@modyfi/vite-plugin-yaml": "^1.1.1",
+    "markdown-it-mathjax3": "^4.3.2",
+    "vitepress": "^1.6.3"
   }
 }

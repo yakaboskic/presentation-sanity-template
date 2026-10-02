@@ -1,13 +1,19 @@
 node_modules/
 dist/
+site/
 .slidev/
 *-export/
+exports/
 *.local
 __pycache__/
 *.pyc
 .venv/
 .cache/
 
+# Generated from manifest.yaml on every build — never hand-edited.
+.vitepress/
+
 # Rendered manim videos — rebuildable from scenes/*.py
 public/manim/*.webm
 public/manim/*.mp4
+public/manim/*.poster.png

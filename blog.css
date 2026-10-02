@@ -1,0 +1,19 @@
+/*
+ * Optional blog-only styles. presentation-sanity imports this file into the
+ * generated VitePress theme when it exists — so it is the blog's counterpart
+ * to `style.css` (which Slidev auto-loads for the deck).
+ *
+ * Kept separate on purpose: style.css is written against `.slidev-layout` and
+ * hides Slidev's nav chrome, none of which means anything here.
+ */
+
+:root {
+  --vp-layout-max-width: 1200px;
+}
+
+/* Match the deck's <DataValue> affordance so a value looks the same in both. */
+.vp-doc .data-value {
+  background: rgba(94, 131, 146, 0.1);
+  border-radius: 2px;
+  padding: 0 0.15em;
+}

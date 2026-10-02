@@ -1,18 +1,46 @@
-# presentation-sanity manifest — single source of configuration per version.
-# This file is a placeholder for the eventual schema. The Python tool
-# `presentation-sanity` will read this and emit `data/variables.json` for the
-# Slidev side to consume, plus orchestrate manim scene rendering.
+# presentation-sanity manifest — the single source of configuration for one
+# *subject*: the thing you are explaining.
+#
+# A subject has shared inputs (variables, scenes, figures) and one or more
+# `outputs:` — different printouts of the same material. Slides and a blog
+# post are the same content rendered twice, not two projects.
 
 metadata:
   title: "Presentation Sanity Demo"
+  description: "A single source of truth for slides and writing."
   authors:
     - name: "Your Name"
       email: "you@example.com"
-  theme: seriph              # any Slidev theme id, package, or local path
 
-# Variables get computed by `presentation-sanity build` and written to
-# `data/variables.json`. Provenance metadata powers an interactive
-# provenance popover in the rendered deck (matching document-sanity).
+# ─── Outputs ────────────────────────────────────────────────────────────────
+# Each entry is one printout. `engine` is inferred for the well-known keys
+# (slides/deck → slidev, blog/post/article → vitepress); state it explicitly
+# for anything else. Delete an entry to stop building that format.
+outputs:
+  blog:
+    engine: vitepress
+    entry: blog.md              # rewritten to `/` in the built site
+    out: site/blog
+    # ── Theming levers, all forwarded into the generated VitePress config ──
+    # Lifted into themeConfig:  nav, sidebar, socialLinks, outline, footer
+    # Any other theme option:   themeConfig: { logo, aside, search, editLink, … }
+    # Any other site option:    vitepress:  { appearance, lang, titleTemplate, … }
+    # Also accepted: head, markdown, exclude, lastUpdated, title, description,
+    # and base (VitePress needs an ABSOLUTE prefix like "/blog/").
+
+  slides:
+    engine: slidev
+    entry: slides.md
+    out: site/slides
+    theme: seriph               # any Slidev theme id, package, or local path
+    # base: "./"                # Slidev accepts relative bases
+
+# ─── Shared inputs ──────────────────────────────────────────────────────────
+# Everything below is consumed identically by every output above.
+
+# Variables are read straight from this file by the `<DataValue>` component
+# (via @modyfi/vite-plugin-yaml) in both engines. Provenance metadata powers
+# the interactive provenance panel.
 variables:
   num_samples:
     value: 12453
@@ -41,12 +69,48 @@ variables:
     command: "python scripts/effect_size.py --cohort discovery"
     updated: "2026-04-29"
 
-# Manim scenes to render before the Slidev build. Each entry produces
-# a video at `public/manim/<output>.webm` that slides reference via
-# `<SlidevVideo src="/manim/<output>.webm">`.
+# Manim scenes, rendered once to `public/manim/<key>.<format>` (plus a
+# last-frame poster). The deck embeds them with `layout: manim`; the blog
+# embeds the same file with `<ManimFigure scene="intro" />`.
 scenes:
   intro:
     source: "scenes/intro.py"
     class: "IntroScene"
     quality: "h"             # 1080p; use 'l' for fast iteration
     format: "webm"
+
+# Excalidraw sources exported to `public/figures/<key>.<format>`, embedded
+# anywhere with `<FigureImage figure="<key>" />`.
+# figures:
+#   architecture:
+#     source: "figures/architecture.excalidraw"
+#     format: "svg"
+
+# LaTeX-shaped citing: \cite{key} in a document, \bibliography where the
+# reference list should go. Sources are parsed and each entry formatted at
+# build time, so the page ships plain anchors — no citation runtime.
+bibliography:
+  sources: ["refs.bib"]
+  style: numeric        # numeric → [1]  |  author-year → (Visscher et al., 2008)
+  sort: appearance      # appearance | author | year
+  title: "References"
+  # link: true          # turn the DOI / URL into a link
+
+# TeX settings. Macros belong here rather than in a \newcommand inside a
+# document: the renderer keeps one TeX instance for the whole build, so an
+# in-document definition leaks into every later block and page, and whether it
+# resolves depends on source order.
+math:
+  # tags: ams          # number display equations and enable \label / \eqref.
+                       # Counters run across the whole build and their starting
+                       # point depends on page order — fine for a single-page
+                       # post, but prefer explicit \tag{…} once there are
+                       # several pages, or reset with \setcounter{equation}{0}.
+  macros:
+    Var: "\\operatorname{Var}"
+    RR: "\\mathbb{R}"
+    norm: ["\\left\\lVert #1 \\right\\rVert", 1]
+
+  # environments: true   # allow bare \begin{align} … \end{align} at block
+                         # level, with no surrounding $$. Set false to require
+                         # $$ fencing, or pass an explicit list of env names.

@@ -53,17 +53,23 @@ def render_readme(slug: str, description: str) -> str:
 
 Built on [presentation-sanity](https://github.com/yakaboskic/presentation-sanity).
 See [presentation-sanity-template](https://github.com/yakaboskic/presentation-sanity-template)
-for documentation on layouts, manim scenes, the manifest schema, and the
-provenance panel.
+for documentation on outputs, layouts, manim scenes, the manifest schema, and
+the provenance panel.
+
+`manifest.yaml` declares the outputs — `blog.md` renders through VitePress,
+`slides.md` through Slidev, both from the same variables, scenes and figures.
+Delete an entry under `outputs:` to stop building that format.
 
 ## Develop
 
 ```bash
-uv sync                                 # Python deps (presentation-sanity[manim])
-npm install                             # Slidev deps
-uv run presentation-sanity dev          # hot-reload at localhost:3030
-uv run presentation-sanity build        # static bundle → dist/
-uv run presentation-sanity preview      # serve dist/ at localhost:8000
+uv sync                                 # Python deps (presentation-sanity)
+npm install                             # Slidev + VitePress deps
+uv run presentation-sanity outputs      # what this subject declares
+uv run presentation-sanity dev blog     # VitePress hot-reload at :5173
+uv run presentation-sanity dev slides   # Slidev hot-reload at :3030
+uv run presentation-sanity build        # every output → site/
+uv run presentation-sanity preview blog # serve site/blog at :8000
 uv run presentation-sanity export pdf
 ```
 
@@ -105,6 +111,9 @@ def main() -> None:
 
     manifest = MANIFEST.read_text()
     manifest = re.sub(r'title:\s*"[^"]*"', f'title: "{title}"', manifest, count=1)
+    manifest = re.sub(
+        r'description:\s*"[^"]*"', f'description: "{description}"', manifest, count=1
+    )
     manifest = re.sub(r'name:\s*"[^"]*"', f'name: "{author}"', manifest, count=1)
     manifest = re.sub(r'email:\s*"[^"]*"', f'email: "{email}"', manifest, count=1)
     MANIFEST.write_text(manifest)
@@ -126,8 +135,8 @@ def main() -> None:
     print()
     print("Next steps:")
     print("  uv sync           # install Python deps")
-    print("  npm install       # install Slidev deps")
-    print("  uv run presentation-sanity dev")
+    print("  npm install       # install Slidev + VitePress deps")
+    print("  uv run presentation-sanity dev blog     # or: dev slides")
     print()
 
     if confirm("Remove init.py?"):
