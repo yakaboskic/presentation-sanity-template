@@ -81,6 +81,13 @@ scene: intro
 scenes/intro.py → public/manim/intro.webm
 
 ---
+layout: manim-steps
+scene: intro_steps
+---
+
+Stepped: one segment per click (scenes/intro_steps.py)
+
+---
 layout: center
 class: text-center
 ---

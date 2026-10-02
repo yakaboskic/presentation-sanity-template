@@ -20,3 +20,6 @@ presentations/**/index.html
 public/manim/*.webm
 public/manim/*.mp4
 public/manim/*.poster.png
+
+# Stepped manim scenes: public/manim/<scene>/NN.webm + posters + segments.json
+public/manim/*/

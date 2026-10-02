@@ -78,6 +78,14 @@ scenes:
     class: "IntroScene"
     quality: "h"             # 1080p; use 'l' for fast iteration
     format: "webm"
+  # Stepped: the scene marks checkpoints with manim-slides' next_slide(), and
+  # `layout: manim-steps` plays one segment per click (needs manim-slides).
+  intro_steps:
+    source: "scenes/intro_steps.py"
+    class: "IntroSteps"
+    quality: "h"
+    format: "webm"
+    steps: true
 
 # Excalidraw sources exported to `public/figures/<key>.<format>`, embedded
 # anywhere with `<FigureImage figure="<key>" />`.
