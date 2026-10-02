@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 // @ts-expect-error — resolved at build time by @modyfi/vite-plugin-yaml
-import manifest from '../manifest.yaml'
-import { showProvenance } from '../composables/useProvenance'
+import manifest from '@project/manifest.yaml'
+import { showProvenance } from '@shared/composables/useProvenance'
 
 const props = defineProps<{
   /** Variable key in manifest.yaml under `variables:` */

@@ -1,0 +1,7 @@
+{
+  "name": "psanity-shared",
+  "version": "0.0.0",
+  "private": true,
+  "description": "This project's shared Slidev layer: components, layouts, global layers, styles and Vite config used by every deck (and the components by every blog).",
+  "keywords": ["slidev-addon"]
+}

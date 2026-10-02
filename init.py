@@ -1,11 +1,16 @@
-"""Bootstrap a fresh deck cloned from presentation-sanity-template.
+"""Bootstrap a fresh project cloned from presentation-sanity-template.
 
-Prompts for name, title, author, description; rewrites pyproject.toml,
-package.json, manifest.yaml, README.md; refreshes uv.lock; offers to
-remove itself when done. Run once on a fresh clone:
+Prompts for the project (name, title, authors, description) and its first
+presentation (folder name, deck title); rewrites pyproject.toml, package.json,
+manifest.yaml and README.md, renames presentations/example to your first
+presentation, refreshes uv.lock, and offers to remove itself. Run once on a
+fresh clone:
 
     python init.py
 """
+from __future__ import annotations
+
+import json
 import re
 import shutil
 import subprocess
@@ -19,6 +24,8 @@ PYPROJECT = ROOT / "pyproject.toml"
 PACKAGE_JSON = ROOT / "package.json"
 MANIFEST = ROOT / "manifest.yaml"
 README = ROOT / "README.md"
+PRESENTATIONS = ROOT / "presentations"
+EXAMPLE = PRESENTATIONS / "example"
 
 TEMPLATE_NAME = "presentation-sanity-template"
 
@@ -46,31 +53,42 @@ def confirm(prompt: str, default: bool = True) -> bool:
     return answer in ("y", "yes")
 
 
-def render_readme(slug: str, description: str) -> str:
+def set_headmatter_title(path: Path, title: str) -> None:
+    """Set `title:` in a deck's first frontmatter block, keeping comments."""
+    text = path.read_text()
+    m = re.match(r"(\s*---\n)(.*?)(\n---)", text, re.S)
+    if m is None:
+        return
+    line = f"title: {json.dumps(title, ensure_ascii=False)}"
+    body = re.sub(r"^title:.*$", lambda _: line, m.group(2), count=1, flags=re.M)
+    path.write_text(text[: m.start(2)] + body + text[m.end(2):])
+
+
+def render_readme(slug: str, description: str, first: str) -> str:
     return f"""# {slug}
 
 {description}
 
 Built on [presentation-sanity](https://github.com/yakaboskic/presentation-sanity).
 See [presentation-sanity-template](https://github.com/yakaboskic/presentation-sanity-template)
-for documentation on outputs, layouts, manim scenes, the manifest schema, and
-the provenance panel.
+for documentation on presentations and versions, the manifest schema, layouts,
+manim scenes and the provenance panel.
 
-`manifest.yaml` declares the outputs — `blog.md` renders through VitePress,
-`slides.md` through Slidev, both from the same variables, scenes and figures.
-Delete an entry under `outputs:` to stop building that format.
+Every folder under `presentations/` with a `slides.md` (Slidev) and/or a
+`blog.md` (VitePress) is a presentation. They all share `manifest.yaml`
+(variables, scenes, figures, bibliography), `public/` and the `shared/`
+components and layouts.
 
 ## Develop
 
 ```bash
-uv sync                                 # Python deps (presentation-sanity)
-npm install                             # Slidev + VitePress deps
-uv run presentation-sanity outputs      # what this subject declares
-uv run presentation-sanity dev blog     # VitePress hot-reload at :5173
-uv run presentation-sanity dev slides   # Slidev hot-reload at :3030
-uv run presentation-sanity build        # every output → site/
-uv run presentation-sanity preview blog # serve site/blog at :8000
-uv run presentation-sanity export pdf
+uv sync                                       # Python deps (presentation-sanity)
+npm install                                   # Slidev + VitePress (+ links shared/)
+uv run presentation-sanity list               # presentations in this project
+uv run presentation-sanity dev {first}         # Slidev hot-reload at :3030
+uv run presentation-sanity new {first}-v2 --from {first}   # fork a new version
+uv run presentation-sanity build              # everything → site/ (+ site/index.html)
+uv run presentation-sanity preview            # serve site/ at :8000
 ```
 
 For manim, you'll also need `ffmpeg`, `cairo`, `pango`, and a LaTeX install.
@@ -79,16 +97,18 @@ For manim, you'll also need `ffmpeg`, `cairo`, `pango`, and a LaTeX install.
 
 def main() -> None:
     if already_initialized():
-        print("This deck looks already initialized — no template placeholders found.")
+        print("This project looks already initialized — no template placeholders found.")
         print("Delete init.py if you haven't, or restore the template files first.")
         sys.exit(0)
 
-    print("Setting up a new deck. Defaults shown in [brackets].\n")
+    print("Setting up a new project. Defaults shown in [brackets].\n")
     slug = ask("Project slug (kebab-case)", default=ROOT.name)
-    title = ask("Deck title")
+    title = ask("Project title (e.g. the program or grant name)")
     author = ask("Author name")
     email = ask("Author email")
-    description = ask("Short description", default=f"Talk: {title}")
+    description = ask("Short description", default=f"Presentations about {title}")
+    first = ask("First presentation folder (e.g. kickoff, or kickoff/v1)", default="kickoff")
+    deck_title = ask("First presentation's title", default=title)
 
     pyproject = PYPROJECT.read_text()
     pyproject = pyproject.replace(
@@ -118,9 +138,20 @@ def main() -> None:
     manifest = re.sub(r'email:\s*"[^"]*"', f'email: "{email}"', manifest, count=1)
     MANIFEST.write_text(manifest)
 
-    README.write_text(render_readme(slug, description))
+    first = first.strip().strip("/")
+    target = PRESENTATIONS / first
+    if EXAMPLE.is_dir() and target != EXAMPLE:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        EXAMPLE.rename(target)
+    if (target / "slides.md").is_file():
+        set_headmatter_title(target / "slides.md", deck_title)
 
-    print(f"\nRewrote pyproject.toml, package.json, manifest.yaml, README.md.")
+    README.write_text(render_readme(slug, description, first))
+
+    print(
+        f"\nRewrote pyproject.toml, package.json, manifest.yaml, README.md; "
+        f"first presentation is presentations/{first}/."
+    )
 
     if shutil.which("uv"):
         print("Refreshing uv.lock...")
@@ -135,8 +166,8 @@ def main() -> None:
     print()
     print("Next steps:")
     print("  uv sync           # install Python deps")
-    print("  npm install       # install Slidev + VitePress deps")
-    print("  uv run presentation-sanity dev blog     # or: dev slides")
+    print("  npm install       # install Slidev + VitePress, link shared/")
+    print(f"  uv run presentation-sanity dev {first}")
     print()
 
     if confirm("Remove init.py?"):

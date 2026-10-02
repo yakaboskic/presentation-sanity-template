@@ -1,0 +1,10 @@
+# Optional. A presentation's own manifest describes it and tunes its outputs;
+# variables, scenes, figures, bibliography and math are shared, so they live
+# in the project's manifest.yaml.
+metadata:
+  date: "2026-10-02"                  # shown on site/index.html
+  venue: "Lab meeting"
+  # title: comes from slides.md's headmatter unless set here
+# outputs:
+#   slides:
+#     base: "./"                      # merged over the project's `outputs:`

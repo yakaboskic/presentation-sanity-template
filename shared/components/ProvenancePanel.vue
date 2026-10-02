@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
 // @ts-expect-error — resolved at build time by @modyfi/vite-plugin-yaml
-import manifest from '../manifest.yaml'
-import { hideProvenance, provenanceKey } from '../composables/useProvenance'
+import manifest from '@project/manifest.yaml'
+import { hideProvenance, provenanceKey } from '@shared/composables/useProvenance'
 
 type Variable = {
   value: number | string

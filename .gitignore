@@ -8,10 +8,13 @@ exports/
 __pycache__/
 *.pyc
 .venv/
+
+# Caches and generated config — presentation-sanity writes each blog's
+# VitePress config to .cache/vitepress/<presentation>/ on every build.
 .cache/
 
-# Generated from manifest.yaml on every build — never hand-edited.
-.vitepress/
+# Slidev writes a temporary index.html next to the deck while it builds.
+presentations/**/index.html
 
 # Rendered manim videos — rebuildable from scenes/*.py
 public/manim/*.webm

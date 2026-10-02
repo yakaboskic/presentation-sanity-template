@@ -19,6 +19,12 @@
   "devDependencies": {
     "@modyfi/vite-plugin-yaml": "^1.1.1",
     "markdown-it-mathjax3": "^4.3.2",
-    "vitepress": "^1.6.3"
+    "vitepress": "^1.6.3",
+    "psanity-shared": "file:./shared"
+  },
+  "slidev": {
+    "addons": [
+      "psanity-shared"
+    ]
   }
 }

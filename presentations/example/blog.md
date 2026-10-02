@@ -5,10 +5,10 @@ outline: [2, 3]
 
 # A single source of truth
 
-This page and `slides.md` are two printouts of the same subject. They share
-one `manifest.yaml`, one `components/` directory, one set of manim scenes,
-and one `public/` folder of rendered artifacts. Nothing is duplicated; only
-the renderer differs.
+This page and `slides.md` are two printouts of the same presentation, and
+every presentation in the project shares one `manifest.yaml`, one `shared/`
+set of components, one set of manim scenes, and one `public/` folder of
+rendered artifacts. Nothing is duplicated; only the renderer differs.
 
 ## Data with provenance
 
@@ -88,8 +88,8 @@ markers and the list together.
 ## Building
 
 ```bash
-presentation-sanity dev blog      # vitepress hot-reload
-presentation-sanity dev slides    # slidev hot-reload
-presentation-sanity build         # both → site/blog/ and site/slides/
-presentation-sanity outputs       # what this subject declares
+presentation-sanity dev example:blog     # vitepress hot-reload
+presentation-sanity dev example          # slidev hot-reload
+presentation-sanity build                # every presentation → site/
+presentation-sanity list                 # what this project holds
 ```

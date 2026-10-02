@@ -1,42 +1,42 @@
-# presentation-sanity manifest — the single source of configuration for one
-# *subject*: the thing you are explaining.
+# presentation-sanity manifest — the single source of configuration for a
+# *project*: one subject (a research program, a product, a grant) and every
+# presentation about it.
 #
-# A subject has shared inputs (variables, scenes, figures) and one or more
-# `outputs:` — different printouts of the same material. Slides and a blog
-# post are the same content rendered twice, not two projects.
+# Each folder under presentations/ that has a slides.md (a Slidev deck) and/or
+# a blog.md (a VitePress post) is one presentation. Nest folders to keep the
+# versions of a talk together:
+#
+#   presentations/kickoff/v1/slides.md
+#   presentations/kickoff/v2/slides.md      ← `presentation-sanity new kickoff/v2 --from kickoff/v1`
+#
+# Everything in this file is shared by all of them: a number, a scene or a
+# figure is defined once and reused by every deck and post.
 
 metadata:
-  title: "Presentation Sanity Demo"
+  title: "Presentation Sanity Demo"     # the project's name — heads site/index.html
   description: "A single source of truth for slides and writing."
-  authors:
+  authors:                              # inherited by every presentation
     - name: "Your Name"
       email: "you@example.com"
 
 # ─── Outputs ────────────────────────────────────────────────────────────────
-# Each entry is one printout. `engine` is inferred for the well-known keys
-# (slides/deck → slidev, blog/post/article → vitepress); state it explicitly
-# for anything else. Delete an entry to stop building that format.
+# Defaults for every presentation. A presentation builds `slides` when it has a
+# slides.md and `blog` when it has a blog.md, into site/<presentation>/<output>/.
+# Settings here apply to all of them; a presentation's own manifest.yaml can
+# override any of them under its `outputs:`, or opt out with `blog: false`.
 outputs:
   blog:
-    engine: vitepress
-    entry: blog.md              # rewritten to `/` in the built site
-    out: site/blog
     # ── Theming levers, all forwarded into the generated VitePress config ──
     # Lifted into themeConfig:  nav, sidebar, socialLinks, outline, footer
     # Any other theme option:   themeConfig: { logo, aside, search, editLink, … }
     # Any other site option:    vitepress:  { appearance, lang, titleTemplate, … }
-    # Also accepted: head, markdown, exclude, lastUpdated, title, description,
-    # and base (VitePress needs an ABSOLUTE prefix like "/blog/").
-
+    # Also accepted: head, markdown, exclude, lastUpdated, title, description.
   slides:
-    engine: slidev
-    entry: slides.md
-    out: site/slides
-    theme: seriph               # any Slidev theme id, package, or local path
-    # base: "./"                # Slidev accepts relative bases
+    # A deck's look (theme, transition, fonts) lives in its slides.md headmatter.
+    # base: "./"                # the default; decks work from any URL prefix
 
 # ─── Shared inputs ──────────────────────────────────────────────────────────
-# Everything below is consumed identically by every output above.
+# Everything below is consumed identically by every presentation.
 
 # Variables are read straight from this file by the `<DataValue>` component
 # (via @modyfi/vite-plugin-yaml) in both engines. Provenance metadata powers
