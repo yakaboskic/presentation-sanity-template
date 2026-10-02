@@ -9,7 +9,10 @@ clone it (or "Use this template"), run `python init.py` to name the project and
 its first presentation, then write.
 
 Declares [`presentation-sanity`](https://github.com/yakaboskic/presentation-sanity)
-as a git dependency. By default the install **does not pull manim** —
+as a git dependency **pinned to a release** (`@v0.3.0`), so every project made
+from this template builds with the same tool until you choose to upgrade (see
+[Upgrading presentation-sanity](#upgrading-presentation-sanity)). By default
+the install **does not pull manim** —
 pre-rendered videos live in `public/manim/` and travel with the repo, so
 deploying doesn't require cairo/pango/native build tools. Add the `[manim]`
 extra (see below) only when you want to render scenes locally.
@@ -76,7 +79,8 @@ npm install                 # installs Slidev + VitePress and links shared/
 To **render manim scenes locally**, install the manim extra and its native deps:
 
 ```bash
-# Switch the dep in pyproject.toml to `presentation-sanity[manim]@…`, then:
+# In pyproject.toml, add the extra and keep the pinned tag:
+#   "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0"
 uv sync
 
 brew install ffmpeg cairo pango      # macOS — Linux: apt install libcairo2-dev libpango1.0-dev
@@ -85,6 +89,32 @@ brew install ffmpeg cairo pango      # macOS — Linux: apt install libcairo2-de
 
 If you're just writing (and `public/manim/` already has rendered videos), skip
 the manim install entirely — `build` auto-skips rendering with a log line.
+
+## Upgrading presentation-sanity
+
+The tool is pinned to a release tag in `pyproject.toml`, and `uv.lock` records
+the exact commit behind it:
+
+```toml
+dependencies = [
+    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
+]
+```
+
+To move to a newer release, read its notes on the
+[releases page](https://github.com/yakaboskic/presentation-sanity/releases),
+change the tag on that line (`@v0.3.0` → `@v0.4.0`), and re-lock:
+
+```bash
+uv lock      # resolves the new tag and records its commit in uv.lock
+uv sync      # installs it
+```
+
+Edit the line rather than using `uv add`: `uv add` moves a git source into
+`[tool.uv.sources]`, which works with uv but not with pip.
+
+Avoid `@main`: it moves with every commit, so two clones of the same project
+can end up building with different tools.
 
 ## Daily workflow
 

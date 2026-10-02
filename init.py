@@ -92,6 +92,10 @@ uv run presentation-sanity preview            # serve site/ at :8000
 ```
 
 For manim, you'll also need `ffmpeg`, `cairo`, `pango`, and a LaTeX install.
+
+presentation-sanity is pinned to a release tag in `pyproject.toml`. To upgrade,
+change the tag to a newer [release](https://github.com/yakaboskic/presentation-sanity/releases)
+and run `uv lock && uv sync`.
 """
 
 

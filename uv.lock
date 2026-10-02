@@ -10,7 +10,7 @@ resolution-markers = [
 [[package]]
 name = "presentation-sanity"
 version = "0.3.0"
-source = { git = "https://github.com/yakaboskic/presentation-sanity.git?rev=main#89ce0b12d9a09f48e0b1be59764096e6b4f510e2" }
+source = { git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.3.0#89ce0b12d9a09f48e0b1be59764096e6b4f510e2" }
 dependencies = [
     { name = "pyyaml" },
 ]
@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "presentation-sanity", git = "https://github.com/yakaboskic/presentation-sanity.git?rev=main" }]
+requires-dist = [{ name = "presentation-sanity", git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.3.0" }]
 
 [[package]]
 name = "pyyaml"
