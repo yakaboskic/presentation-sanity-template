@@ -9,8 +9,8 @@ resolution-markers = [
 
 [[package]]
 name = "presentation-sanity"
-version = "0.1.0"
-source = { git = "https://github.com/yakaboskic/presentation-sanity.git?rev=main#8b58902117f60c34136838f000dce73b457a658b" }
+version = "0.3.0"
+source = { git = "https://github.com/yakaboskic/presentation-sanity.git?rev=main#89ce0b12d9a09f48e0b1be59764096e6b4f510e2" }
 dependencies = [
     { name = "pyyaml" },
 ]
