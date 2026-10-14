@@ -1,4 +1,4 @@
-# presentation-sanity-template
+# Presentation Sanity -- Starter Pack
 
 A working **project** driven by `manifest.yaml`: one set of variables, manim
 scenes, figures and logos shared by every **presentation** you give about it.
