@@ -1,5 +1,5 @@
 # Build this project's site/ and deploy it to GitHub Pages.
-# Written by `presentation-sanity pages init` (v0.4.1); rerun it with
+# Written by `presentation-sanity pages init` (v0.4.2); rerun it with
 # --force to regenerate.
 #
 # A Pages site is PUBLIC, even when this repository is private.
