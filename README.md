@@ -14,7 +14,7 @@ Don't want a GitHub repo at all? `presentation-sanity init` makes the same
 project in any folder, no git needed (see [Starting a project](#starting-a-project)).
 
 Declares [`presentation-sanity`](https://github.com/yakaboskic/presentation-sanity)
-as a git dependency **pinned to a release** (`@v0.4.0`), so every project made
+as a git dependency **pinned to a release** (`@v0.4.1`), so every project made
 from this template builds with the same tool until you choose to upgrade (see
 [Upgrading presentation-sanity](#upgrading-presentation-sanity)). manim comes
 in through a default **`manim` dependency group**, so `uv sync` installs it and
@@ -94,7 +94,7 @@ and removes itself along with this repo's demo workflow.
 **Without git or GitHub**, into any folder (new, empty, or one to knit into):
 
 ```bash
-uvx --from "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.0" \
+uvx --from "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.1" \
   presentation-sanity init my-talks --title "My talks" --first kickoff
 ```
 
@@ -135,7 +135,7 @@ the exact commit behind it:
 
 ```toml
 dependencies = [
-    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.0",
+    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.1",
 ]
 ```
 
@@ -144,7 +144,7 @@ takes it from this line, so there's one tag to change.)
 
 To move to a newer release, read its notes on the
 [releases page](https://github.com/yakaboskic/presentation-sanity/releases),
-change the tag on that line (`@v0.4.0` → `@v0.5.0`), and re-lock:
+change the tag on that line (`@v0.4.1` → `@v0.5.0`), and re-lock:
 
 ```bash
 uv lock      # resolves the new tag and records its commit in uv.lock

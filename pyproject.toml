@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 # the same tool. To upgrade, change the tag below to a newer release
 # (https://github.com/yakaboskic/presentation-sanity/releases) and run `uv lock`.
 dependencies = [
-    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.0",
+    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.1",
 ]
 
 # manim, so `build` renders scenes/*.py into public/manim/ (the machine needs
