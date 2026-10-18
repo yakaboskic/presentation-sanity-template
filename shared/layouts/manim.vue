@@ -25,7 +25,7 @@
  * (necessary when the built site is served from a subdirectory; Vite's
  * base rewriting only applies to static imports, not runtime strings).
  */
-import { onSlideEnter, onSlideLeave, useIsSlideActive } from '@slidev/client'
+import { onSlideEnter, onSlideLeave, useIsSlideActive, useNav } from '@slidev/client'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 const props = withDefaults(
@@ -49,6 +49,12 @@ const props = withDefaults(
 )
 
 const src = computed(() => `${import.meta.env.BASE_URL}manim/${props.scene}.${props.format}`)
+// The last frame, which build-manim extracts next to the video: the finished
+// diagram. It paints before the video loads, and it is the whole slide in a
+// PDF/PNG export, where a replayed video would capture its (often empty)
+// first frame.
+const poster = computed(() => `${import.meta.env.BASE_URL}manim/${props.scene}.poster.png`)
+const { isPrintMode } = useNav()
 const video = ref<HTMLVideoElement>()
 const isActive = useIsSlideActive()
 
@@ -74,7 +80,7 @@ function pauseAndReset() {
 }
 
 onSlideEnter(() => {
-  if (props.autoplay) replay()
+  if (props.autoplay && !isPrintMode.value) replay()
 })
 onSlideLeave(pauseAndReset)
 
@@ -101,9 +107,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 <template>
   <div class="slidev-layout manim-layout" :style="{ background }">
     <!-- `muted` is required for browser autoplay policies; click/keys still play with sound off -->
+    <img v-if="isPrintMode" class="manim-video" :src="poster" :alt="`manim scene ${scene}`" />
     <video
+      v-else
       ref="video"
       class="manim-video"
+      :poster="poster"
       :controls="controls"
       preload="auto"
       muted
@@ -118,7 +127,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     </video>
 
     <!-- Key-hint affordances, top-right. Subtle by default; restyle in style.css. -->
-    <div class="manim-hint">
+    <div v-if="!isPrintMode" class="manim-hint">
       <kbd>{{ replayKey }}</kbd> replay
       <span class="manim-hint-sep">·</span>
       <kbd>{{ pauseKey }}</kbd> pause
