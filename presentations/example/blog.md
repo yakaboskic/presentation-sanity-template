@@ -1,95 +1,112 @@
 ---
-title: A single source of truth for slides and writing
+title: Every number should know where it came from
 outline: [2, 3]
 ---
 
-# A single source of truth
+# Every number should know where it came from
 
-This page and `slides.md` are two printouts of the same presentation, and
-every presentation in the project shares one `manifest.yaml`, one `shared/`
-set of components, one set of manim scenes, and one `public/` folder of
-rendered artifacts. Nothing is duplicated; only the renderer differs.
+A result travels. It leaves an analysis script, lands on a lab-meeting slide,
+gets copied onto a poster, then into a paper, then into the grant renewal.
+Every hop is a copy, and copies drift: a digit gets transposed, a slide keeps
+the number from before the last QC pass, and six months later nobody can say
+which version is right.
 
-## Data with provenance
+When Nature surveyed 1,500 scientists about reproducibility \cite{baker2016},
+the conversation was about whole experiments. It starts smaller than that,
+with a number typed twice.
 
-The same `<DataValue>` component backs both formats. We analyzed <DataValue
-var="num_samples" /> samples and observed $p$ = <DataValue var="p_value" />
-with a mean effect size of <DataValue var="effect_size" />.
+This post and [its deck](../slides/){target="_self"} are two printouts of one project. Every
+number on both comes from a single file, and every one of them can tell you
+where it came from.
 
-<!-- Keep a component tag off the start of a line: markdown-it treats a
-     line beginning with `<Tag` as an HTML *block* and closes the surrounding
-     paragraph around it. Wrapping mid-line (as above) keeps it inline. -->
+## Click the number
 
-Click any underlined value and the provenance panel slides in from the
-right, showing `inputs → command → variable` as a vertical graph — the
-identical panel the deck uses, mounted here through VitePress's
-`layout-bottom` slot instead of Slidev's `global-bottom.vue`.
+We analyzed <DataValue var="num_samples" /> participants after QC. The primary
+comparison came out at an effect size of <DataValue var="effect_size" />, with
+$p$ = <DataValue var="p_value" />.
 
-Because the component imports `manifest.yaml` directly, editing a value
-hot-reloads both dev servers.
+<!-- Keep a component tag off the start of a line: markdown-it treats a line
+     beginning with `<Tag` as an HTML block and breaks the paragraph. -->
+
+Click any of those three numbers. A panel slides in with the file the value was
+read from, the command that produced it, and the date it was last updated.
+Nothing is executed when the page builds. The panel is a record, kept next to
+the value, of how the value was made.
+
+\citet{sandve2013} put reproducible computational research as ten rules.
+The first is to keep track of how every result was produced, and the ninth is
+to connect textual statements to underlying results. A `<DataValue>` is the
+ninth rule as a component: the sentence and the result it reports are the
+same object, so they can't drift apart.
+
+The effect size is Cohen's $d$, the difference in group means scaled by the
+pooled standard deviation:
+
+\begin{equation}
+d = \frac{\bar{x}_1 - \bar{x}_2}{s_p},
+\qquad
+s_p = \sqrt{\frac{(n_1 - 1)\, s_1^2 + (n_2 - 1)\, s_2^2}{n_1 + n_2 - 2}}
+\end{equation}
+
+The math is rendered to SVG when the site builds, so it needs no JavaScript in
+the browser and it prints cleanly.
+
+## Change it once
+
+Each number is typed exactly once, in `manifest.yaml`:
 
 ```yaml
-# manifest.yaml
 variables:
   num_samples:
     value: 12453
     format: ","
-    description: "Total samples after QC filtering"
+    description: "Participants after QC filtering"
     source: "data/results.csv"
-    updated: "2026-04-29"
+    command: "python scripts/qc.py data/raw/ --out data/results.csv"
+    updated: "2026-09-30"
 ```
 
-## Manim scenes as figures
+That one line feeds this post, the deck, the PDF handout and the PowerPoint
+export. When the second batch of samples cleared QC, the count went from <DataValue
+var="num_samples_2026q1" /> to <DataValue var="num_samples" />. That took one
+edit and one rebuild, with no find-and-replace across slide decks.
 
-A scene renders once to `public/manim/<key>.webm`. The deck shows it
-full-bleed via `layout: manim`; here the same file is an inline figure that
-plays when it scrolls into view:
+<ManimFigure scene="one_source" caption="Edit once, and every printout follows. The same rendered video plays full-screen in the deck." />
 
-<ManimFigure scene="intro" caption="scenes/intro.py → public/manim/intro.webm" />
+## Old talks keep their numbers
 
-The poster frame is the *last* frame of the animation — usually the finished
-diagram — so the figure reads correctly before playback and when printed.
-
-## Math is first-class
-
-LaTeX renders to static SVG at build time — no client-side JavaScript, and it
-prints correctly. Inline math like $\hat{\beta} = (X^\top X)^{-1} X^\top y$ sits
-in running text, and display environments are written the way you would in a
-`.tex` file, with no `$$` fence:
-
-\begin{align}
-h^2 &= \frac{\sigma^2_A}{\sigma^2_P} \\
-    &= \frac{\sigma^2_A}{\sigma^2_A + \sigma^2_E}
-\end{align}
-
-`$$ … $$` still works and is required for anything nested, like `cases` or a
-matrix. Macros come from `math.macros` in the manifest, so they mean the same
-thing in every output: $\Var(X)$, $\RR^n$, $\norm{v}$.
-
-Code blocks use Shiki — the same highlighter Slidev uses, so a snippet looks
-identical in both printouts.
-
-## Citations
-
-Cite the way you would in LaTeX. `\cite{visscher2008}` renders a linked
-label \cite{visscher2008}, several keys collapse into one bracket
-\cite{visscher2008,falconer1996}, `\citet` reads as text —
-\citet{falconer1996} is the standard reference — and a locator rides along:
-\cite[p. 160]{falconer1996}.
-
-Entries come from the `.bib` files named in `bibliography.sources`, and
-`\bibliography` marks where the list goes. Both the label style (`numeric` or
-`author-year`) and the ordering are manifest settings, so switching from `[1]`
-to `(Visscher et al., 2008)` is a one-line change that renumbers the in-text
-markers and the list together.
-
-\bibliography
-
-## Building
+Talks get given more than once. In this project, a new version is a folder,
+forked from the last one:
 
 ```bash
-presentation-sanity dev example:blog     # vitepress hot-reload
-presentation-sanity dev example          # slidev hot-reload
-presentation-sanity build                # every presentation → site/
-presentation-sanity list                 # what this project holds
+presentation-sanity new kickoff/v2 --from kickoff/v1
 ```
+
+The new folder records where it came from, and the project's index page shows
+that lineage. When a number changes between versions, it gets a new key rather
+than an edit. The March talk keeps reporting <DataValue
+var="num_samples_2026q1" />, with its March provenance attached, and nothing it
+said changes behind its back.
+
+## A minimum standard
+
+\citet{peng2011} argues that when full independent replication isn't possible,
+reproducibility can serve as a minimum standard for judging a scientific claim.
+A talk makes claims too. Making each number traceable to its source is the
+cheapest part of meeting that standard, and with one source it costs nothing
+extra to keep.
+
+## Start yours
+
+- **On GitHub:** "Use this template" on
+  [presentation-sanity-template](https://github.com/yakaboskic/presentation-sanity-template),
+  then run `python init.py`.
+- **Without git:** `presentation-sanity init my-talk` in any folder. The
+  [template's README](https://github.com/yakaboskic/presentation-sanity-template#starting-a-project)
+  has the one-line `uvx` version, which needs nothing installed.
+- **With an agent:** the project ships a `/presentation-sanity` skill for
+  Claude Code, and the same skill in `.agents/skills/` for other agents.
+
+The short version of this post is [the deck](../slides/){target="_self"}.
+
+\bibliography

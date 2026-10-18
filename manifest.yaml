@@ -45,21 +45,24 @@ variables:
   num_samples:
     value: 12453
     format: ","
-    description: "Total samples after QC filtering"
+    description: "Participants after QC filtering"
     source: "data/results.csv"
-    command: "python data/compute.py"
-    updated: "2026-04-29"
-  p_value:
-    value: 0.0087
-    format: ".2e"
-    description: "Primary genome-wide p-value"
-    source: "data/results.csv"
-    command: "python data/compute.py"
-    updated: "2026-04-29"
+    command: "python scripts/qc.py data/raw/ --out data/results.csv"
+    updated: "2026-09-30"
+  # The same count as presented in March, before the second batch cleared QC.
+  # Kept under its own key so the March version of the talk keeps showing the
+  # number it showed: a changed fact gets a new key, never an edit.
+  num_samples_2026q1:
+    value: 11982
+    format: ","
+    description: "Participants after QC filtering (March freeze)"
+    source: "data/results_2026-03.csv"
+    command: "python scripts/qc.py data/raw_2026-03/ --out data/results_2026-03.csv"
+    updated: "2026-03-12"
   effect_size:
     value: 0.342
-    format: ".3f"
-    description: "Mean effect size across discovery cohort"
+    format: ".2f"
+    description: "Standardized effect size (Cohen's d), discovery cohort"
     # `data` (list) renders as a multi-line "inputs" node in the
     # provenance graph. Use this when a value depends on multiple files.
     # Falls back to `source:` (single file) when `data:` is absent.
@@ -67,15 +70,22 @@ variables:
       - "data/results.csv"
       - "data/cohort_metadata.tsv"
     command: "python scripts/effect_size.py --cohort discovery"
-    updated: "2026-04-29"
+    updated: "2026-09-30"
+  p_value:
+    value: 0.0087
+    format: ".1e"
+    description: "Two-sided p-value for the primary comparison"
+    source: "data/results.csv"
+    command: "python scripts/effect_size.py --cohort discovery"
+    updated: "2026-09-30"
 
 # Manim scenes, rendered once to `public/manim/<key>.<format>` (plus a
 # last-frame poster). The deck embeds them with `layout: manim`; the blog
-# embeds the same file with `<ManimFigure scene="intro" />`.
+# embeds the same file with `<ManimFigure scene="one_source" />`.
 scenes:
-  intro:
-    source: "scenes/intro.py"
-    class: "IntroScene"
+  one_source:
+    source: "scenes/one_source.py"
+    class: "OneSource"
     quality: "h"             # 1080p; use 'l' for fast iteration
     format: "webm"
 

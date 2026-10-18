@@ -1,0 +1,140 @@
+/*
+ * This deck's own styles. Slidev loads them after shared/style.css, and only
+ * for this presentation, so another deck in the project never sees them.
+ */
+
+/* ─── Cover ───────────────────────────────────────────────────────────── */
+.slidev-layout.hero {
+  background-image:
+    radial-gradient(ellipse at 20% 15%, rgba(127, 179, 196, 0.28), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(74, 222, 128, 0.14), transparent 50%) !important;
+  color: #e8eef1;
+}
+.slidev-layout.hero h1 {
+  color: #f4f8fa;
+  font-size: 2.6rem;
+  line-height: 1.15;
+  max-width: 38rem;
+  margin: 0 auto;
+}
+.slidev-layout.hero p {
+  font-size: 1.25rem;
+  opacity: 0.85;
+  margin-top: 1.5rem;
+}
+.slidev-layout.hero .data-value {
+  color: #a7f3d0;
+  background: rgba(167, 243, 208, 0.12);
+}
+.slidev-layout .hero-hint {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  right: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+}
+
+/* ─── Shared bits ─────────────────────────────────────────────────────── */
+.slidev-layout .punchline {
+  margin-top: 2rem;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.slidev-layout .footnote {
+  position: absolute;
+  bottom: 1.2rem;
+  left: 3.5rem;
+  right: 3.5rem;
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
+
+/* ─── Slide 2: three copies of one result ─────────────────────────────── */
+.drift-card {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 1.4rem 1.2rem;
+  text-align: center;
+}
+.drift-where {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+.drift-number {
+  font-size: 2.6rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+  font-variant-numeric: tabular-nums;
+  color: #b45309;
+}
+
+/* ─── Slide 3: one big, clickable number ──────────────────────────────── */
+.big-number {
+  font-size: 6.5rem;
+  line-height: 1.1;
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.big-number .data-value {
+  background: none;
+  color: #3f6f80;
+  border-bottom: 4px dashed currentColor;
+  padding: 0;
+}
+.big-number .data-value:hover {
+  background: rgba(94, 131, 146, 0.10);
+}
+.big-caption {
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+/* ─── Slide 4: what reads the line ────────────────────────────────────── */
+.two-cols-header .slidev-code {
+  font-size: 0.95rem !important;
+  line-height: 1.55 !important;
+}
+.two-cols-header .reads-from {
+  padding-left: 1.5rem;
+}
+.two-cols-header .reads-from li {
+  margin: 0.45rem 0;
+}
+
+/* ─── Slide 6: versions side by side ──────────────────────────────────── */
+.version-card {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 1.2rem 1.4rem;
+}
+.version-when {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-top: 0.3rem;
+}
+.version-number {
+  font-size: 2rem;
+  margin-top: 0.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Slide 7: three ways in ──────────────────────────────────────────── */
+.start-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  text-align: left;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.start-grid code {
+  white-space: nowrap;
+}
+.start-grid > div {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+}
