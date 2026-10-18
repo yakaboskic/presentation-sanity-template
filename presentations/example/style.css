@@ -77,13 +77,17 @@
   margin-top: 1rem;
   font-variant-numeric: tabular-nums;
 }
-.big-number .data-value {
+/* The component's own dashed border sits at the bottom of the line box, far
+   below digits this size; a text underline hugs them instead. */
+.slidev-layout .big-number .data-value {
   background: none;
   color: #3f6f80;
-  border-bottom: 4px dashed currentColor;
+  border-bottom: none;
   padding: 0;
+  text-decoration: underline dashed 3px;
+  text-underline-offset: 0.1em;
 }
-.big-number .data-value:hover {
+.slidev-layout .big-number .data-value:hover {
   background: rgba(94, 131, 146, 0.10);
 }
 .big-caption {

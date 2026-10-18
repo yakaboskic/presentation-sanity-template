@@ -140,7 +140,7 @@ The blog post embeds the same file. Press r to replay, p to pause.
 
 # The March talk still shows March's number
 
-<div class="grid grid-cols-2 gap-8 mt-8">
+<div class="version-grid grid grid-cols-2 gap-8 mt-8 mb-8">
   <div class="version-card">
     <code>presentations/kickoff/v1/</code>
     <div class="version-when">March lab meeting</div>
