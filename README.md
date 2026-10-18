@@ -45,7 +45,7 @@ your-project/
 ├── manifest.yaml           # SHARED: variables, scenes, figures, bibliography, math,
 │                           #   and defaults for every presentation's outputs
 ├── refs.bib                # bibliography source for \cite{}
-├── scenes/intro.py         # manim sources
+├── scenes/one_source.py    # manim sources
 ├── public/                 # static assets served at / by every deck and blog
 │   ├── manim/              #   rendered videos + last-frame posters
 │   └── figures/            #   exported Excalidraw SVGs, logos, images
@@ -170,7 +170,7 @@ edit), then `uv lock`.
 ```bash
 uv run presentation-sanity list                    # presentations + what's built
 uv run presentation-sanity check                   # every variable, scene, figure, \cite resolves
-uv run presentation-sanity dev example             # Slidev hot-reload  (localhost:3030)
+uv run presentation-sanity dev example:slides      # Slidev hot-reload  (localhost:3030)
 uv run presentation-sanity dev example:blog        # VitePress hot-reload (localhost:5173)
 uv run presentation-sanity build                   # everything → site/
 uv run presentation-sanity build example           # just one presentation
