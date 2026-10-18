@@ -6,15 +6,20 @@ Each presentation is a folder under `presentations/` with a **Slidev deck**
 (`slides.md`), a **VitePress blog post** (`blog.md`), or both — and versions of
 a talk are just folders next to each other. Use this repo as a starting point:
 clone it (or "Use this template"), run `python init.py` to name the project and
-its first presentation, then write.
+its first presentation, then write. **Live demo:** the example deck and post,
+built and deployed by this repo's own workflow, at
+<https://yakaboskic.github.io/presentation-sanity-template/>.
+
+Don't want a GitHub repo at all? `presentation-sanity init` makes the same
+project in any folder, no git needed (see [Starting a project](#starting-a-project)).
 
 Declares [`presentation-sanity`](https://github.com/yakaboskic/presentation-sanity)
-as a git dependency **pinned to a release** (`@v0.3.0`), so every project made
+as a git dependency **pinned to a release** (`@v0.4.0`), so every project made
 from this template builds with the same tool until you choose to upgrade (see
-[Upgrading presentation-sanity](#upgrading-presentation-sanity)). It includes
-the **`[manim]` extra**, so `uv sync` installs manim and `build` renders your
-scenes — the machine needs ffmpeg, cairo, pango and LaTeX (see
-[One-time setup](#one-time-setup)).
+[Upgrading presentation-sanity](#upgrading-presentation-sanity)). manim comes
+in through a default **`manim` dependency group**, so `uv sync` installs it and
+`build` renders your scenes — the machine needs ffmpeg, cairo, pango and LaTeX
+(see [One-time setup](#one-time-setup)).
 
 ## Why one repo per project
 
@@ -34,8 +39,8 @@ everywhere.
 
 ```
 your-project/
-├── init.py                 # one-time bootstrap: project name, authors, first presentation
-├── pyproject.toml          # declares presentation-sanity[manim], pinned to a release
+├── init.py                 # one-time bootstrap (a shim over `presentation-sanity init`)
+├── pyproject.toml          # presentation-sanity pinned to a release; manim in a default group
 ├── package.json            # Slidev + VitePress; links shared/ as a Slidev addon
 ├── manifest.yaml           # SHARED: variables, scenes, figures, bibliography, math,
 │                           #   and defaults for every presentation's outputs
@@ -61,16 +66,47 @@ your-project/
 │       ├── blog.md         #   the post   (VitePress)
 │       └── manifest.yaml   #   optional: date, venue, title, output overrides
 │
+├── .claude/skills/         # the presentation-sanity agent skill (added by init.py)
+├── .agents/skills/         #   the same skill, for agents other than Claude Code
+├── .github/workflows/pages.yml  # deploys THIS repo's demo; init.py removes it
+│
 ├── .cache/                 # manim/figure caches + generated VitePress configs (gitignored)
 └── site/                   # build output (gitignored)
     ├── index.html          #   landing page listing every presentation
     └── example/{slides,blog}/
 ```
 
-## One-time setup
+## Starting a project
+
+**From this template on GitHub** ("Use this template", or a clone):
 
 ```bash
 python init.py              # project name, authors, first presentation (run once)
+```
+
+`init.py` is a shim: it fetches the presentation-sanity version pinned in
+`pyproject.toml` with `uvx` and runs `presentation-sanity init --in-place`. It
+asks for each answer, or takes them as flags (`python init.py --yes --title
+"My talks" --first kickoff --author "Me" --email me@lab.org`). It renames
+`presentations/example/` to your first presentation, installs the agent skill,
+and removes itself along with this repo's demo workflow.
+
+**Without git or GitHub**, into any folder (new, empty, or one to knit into):
+
+```bash
+uvx --from "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.0" \
+  presentation-sanity init my-talks --title "My talks" --first kickoff
+```
+
+Each release of presentation-sanity carries a snapshot of this template and
+writes its own version into the new project's pin. `--git` adds `git init` and
+a first commit. `--from gh:your-lab/your-template` starts from your lab's fork
+instead (`GH_TOKEN` for a private one). Existing files are never overwritten
+without `--force`.
+
+## One-time setup
+
+```bash
 uv sync                     # installs presentation-sanity, with manim
 npm install                 # installs Slidev + VitePress and links shared/
 ```
@@ -82,15 +118,15 @@ brew install ffmpeg cairo pango      # macOS — Linux: apt install ffmpeg libca
 # LaTeX is needed for MathTex (TeX Live, BasicTeX, etc.)
 ```
 
-Rendered videos are build output: `public/manim/` is gitignored, the first
-`build` renders every scene, and later builds re-render only the scenes that
-changed.
+Rendered videos are **committed** next to their scenes. The first `build`
+renders every scene into `public/manim/`, and later builds re-render only the
+scenes that changed. Commit the new `.webm` and `.poster.png` with the `.py`.
+Deploys ship what's committed instead of re-rendering.
 
 On a machine without those tools (a deploy runner, a co-author who only edits
-text), drop `[manim]` from the dependency line or pass `--skip-manim`: `build`
-then skips rendering and uses whatever is already in `public/manim/`. If you
-deploy that way, commit the rendered videos — remove the `public/manim/` lines
-from `.gitignore`.
+text), install without the `manim` group: `uv sync --no-default-groups`. `build`
+then skips rendering and uses the committed videos (`--skip-manim` does the
+same when manim *is* installed).
 
 ## Upgrading presentation-sanity
 
@@ -99,13 +135,16 @@ the exact commit behind it:
 
 ```toml
 dependencies = [
-    "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
+    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.0",
 ]
 ```
 
+(The `manim` group's `"presentation-sanity[manim]"` has no URL of its own: uv
+takes it from this line, so there's one tag to change.)
+
 To move to a newer release, read its notes on the
 [releases page](https://github.com/yakaboskic/presentation-sanity/releases),
-change the tag on that line (`@v0.3.0` → `@v0.4.0`), and re-lock:
+change the tag on that line (`@v0.4.0` → `@v0.5.0`), and re-lock:
 
 ```bash
 uv lock      # resolves the new tag and records its commit in uv.lock
@@ -118,10 +157,19 @@ Edit the line rather than using `uv add`: `uv add` moves a git source into
 Avoid `@main`: it moves with every commit, so two clones of the same project
 can end up building with different tools.
 
+After upgrading, refresh the agent skill so it matches the new tool:
+`uv run presentation-sanity skills --force`.
+
+Projects made from an older template have `presentation-sanity[manim] @ …` on
+the dependency line itself. To deploy with the Pages workflow, move the extra
+into the group as above (`presentation-sanity pages init` prints the exact
+edit), then `uv lock`.
+
 ## Daily workflow
 
 ```bash
 uv run presentation-sanity list                    # presentations + what's built
+uv run presentation-sanity check                   # every variable, scene, figure, \cite resolves
 uv run presentation-sanity dev example             # Slidev hot-reload  (localhost:3030)
 uv run presentation-sanity dev example:blog        # VitePress hot-reload (localhost:5173)
 uv run presentation-sanity build                   # everything → site/
@@ -535,6 +583,32 @@ Decks and blogs have separate stylesheets on purpose:
   `.vp-doc …` and override VitePress CSS variables here.
 
 For per-slide CSS, use a scoped `<style>` block inside a `slides.md`.
+
+## Agent skill
+
+`init.py` installs a skill for coding agents into `.claude/skills/presentation-sanity/`
+(Claude Code: `/presentation-sanity [mode]`) and `.agents/skills/presentation-sanity/`
+(Codex, Cursor, Pi and others). It knows the project layout and the rules, with
+modes for `new`, `slides`, `blog`, `manim`, `figures`, `variables`, `cite`,
+`export`, `check` and `deploy`. It explains; the CLI does the work.
+`uv run presentation-sanity skills --force` reinstalls it from the installed
+tool.
+
+## Deploying to GitHub Pages
+
+> A Pages site is **public**, even when the repository is private.
+
+```bash
+uv run presentation-sanity pages init     # writes .github/workflows/pages.yml
+```
+
+Then turn Pages on (Settings → Pages → Source: GitHub Actions) and push to
+`main`. The workflow installs without manim (`uv sync --no-default-groups`),
+runs `npm ci`, builds with the repo's URL prefix as `--base`, and deploys
+`site/`. It never renders scenes or exports figures; it ships what's
+committed in `public/`. That's why rendered videos are committed. `pages init`
+warns when a declared scene or figure is missing or gitignored. This repo
+deploys its own demo the same way.
 
 ## Static deployment
 

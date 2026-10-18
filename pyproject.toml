@@ -6,14 +6,20 @@ requires-python = ">=3.10"
 # presentation-sanity is pinned to a release tag, so every clone builds with
 # the same tool. To upgrade, change the tag below to a newer release
 # (https://github.com/yakaboskic/presentation-sanity/releases) and run `uv lock`.
-#
-# The [manim] extra is on by default, so `build` renders scenes/*.py into
-# public/manim/ (the machine needs ffmpeg, cairo, pango and LaTeX). For a
-# deploy environment without those, drop `[manim]`: build then skips rendering
-# and uses whatever videos are already in public/manim/.
 dependencies = [
-    "presentation-sanity[manim] @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.3.0",
+    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.0",
 ]
+
+# manim, so `build` renders scenes/*.py into public/manim/ (the machine needs
+# ffmpeg, cairo, pango and LaTeX). It's a default group: `uv sync` installs
+# it, and `uv sync --no-default-groups` leaves it out — what the Pages
+# workflow and a co-author without those tools use; `build` then ships the
+# videos already committed in public/manim/.
+[dependency-groups]
+manim = ["presentation-sanity[manim]"]
+
+[tool.uv]
+default-groups = ["manim"]
 
 [build-system]
 requires = ["hatchling"]

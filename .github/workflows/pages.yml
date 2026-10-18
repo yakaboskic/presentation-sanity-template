@@ -1,0 +1,68 @@
+# Build this project's site/ and deploy it to GitHub Pages.
+# Written by `presentation-sanity pages init` (v0.4.0); rerun it with
+# --force to regenerate.
+#
+# A Pages site is PUBLIC, even when this repository is private.
+#
+# One-time setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
+#
+# The runner does not render manim (that needs cairo, pango, ffmpeg and LaTeX).
+# `uv sync --no-default-groups` leaves out the `manim` dependency group, and
+# `build --skip-manim --skip-figures` deploys the videos and figures committed
+# in public/ as they are: render locally, commit public/, push.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Deploy from this repository only: forks and template copies skip it.
+    if: github.repository == 'yakaboskic/presentation-sanity-template'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - id: pages
+        uses: actions/configure-pages@v6
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install presentation-sanity (no manim)
+        run: uv sync --locked --no-default-groups
+      - name: Install Slidev and VitePress
+        run: npm ci
+      - name: Build site/
+        # base_path is "/<repo>" for a project site, "" for a custom domain or
+        # a <user>.github.io repository. Blogs need it absolute.
+        run: >-
+          uv run --no-sync presentation-sanity build
+          --skip-manim --skip-figures
+          --base "${{ steps.pages.outputs.base_path }}/"
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
