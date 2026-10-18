@@ -39,12 +39,9 @@ const formattedValue = computed(() => {
   return String(e.value)
 })
 
-const labelWithFmt = computed(() => {
-  const k = provenanceKey.value
-  const e = entry.value
-  if (!k) return ''
-  return e?.format ? `${k}:${e.format}` : k
-})
+// Just the key: the formatted value sits right next to it, and a bare spec
+// like `,` read as a typo (`num_samples:,`).
+const label = computed(() => provenanceKey.value ?? '')
 
 const inputs = computed<string[]>(() => {
   const e = entry.value
@@ -106,7 +103,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
         <div class="prov-node output">
           <span class="prov-label">variable</span>
-          <span class="prov-output-name">{{ labelWithFmt }}</span>
+          <span class="prov-output-name">{{ label }}</span>
           <span class="prov-output-value">{{ formattedValue }}</span>
         </div>
       </div>
