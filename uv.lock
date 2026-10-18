@@ -946,11 +946,19 @@ name = "presentation-sanity-template"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "presentation-sanity" },
+]
+
+[package.dev-dependencies]
+manim = [
     { name = "presentation-sanity", extra = ["manim"] },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "presentation-sanity", extras = ["manim"], git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.3.0" }]
+requires-dist = [{ name = "presentation-sanity", git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.3.0" }]
+
+[package.metadata.requires-dev]
+manim = [{ name = "presentation-sanity", extras = ["manim"] }]
 
 [[package]]
 name = "pycairo"
