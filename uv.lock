@@ -929,8 +929,8 @@ wheels = [
 
 [[package]]
 name = "presentation-sanity"
-version = "0.4.2"
-source = { git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.4.2#89fa87d63a049149397bab7c91a08ad2bd777eb3" }
+version = "0.4.3"
+source = { git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.4.3#9427d87f4a010ea8ca80dbc3119b8f67e5ee6c20" }
 dependencies = [
     { name = "pyyaml" },
 ]
@@ -955,7 +955,7 @@ manim = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "presentation-sanity", git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.4.2" }]
+requires-dist = [{ name = "presentation-sanity", git = "https://github.com/yakaboskic/presentation-sanity.git?rev=v0.4.3" }]
 
 [package.metadata.requires-dev]
 manim = [{ name = "presentation-sanity", extras = ["manim"] }]
