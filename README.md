@@ -27,8 +27,7 @@ python init.py          # project name, authors, first presentation (run once)
 **Just give me a folder.** No GitHub needed; it needs [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uvx --from "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.2" \
-  presentation-sanity init my-talks --title "My talks" --first kickoff
+uvx presentation-sanity init my-talks --title "My talks" --first kickoff
 ```
 
 Each release of presentation-sanity carries a snapshot of this template and pins the new project to itself. `--git` adds `git init` and a first commit, `--from gh:your-lab/your-template` starts from your lab's fork (`GH_TOKEN` for a private one), and existing files are never overwritten without `--force`.
@@ -329,7 +328,7 @@ The tool is pinned to a release tag in `pyproject.toml`, and `uv.lock` records t
 
 ```toml
 dependencies = [
-    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.2",
+    "presentation-sanity @ git+https://github.com/yakaboskic/presentation-sanity.git@v0.4.3",
 ]
 ```
 
